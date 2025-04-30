@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Debouncing Website</title>
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+        }
+        input{
+            width: 150px;
+            height: 5vh;
+        }
+    </style>
+</head>
+<body>
+    <h3>Basic Debouncing</h3>
+    <input type="text" id="inputBox" placeholder="Search">
+    <p id="Input"></p>
+</body>
+</html>
+<script>
+    let  para = document.getElementById("Input")
+    para.innerHTML=""
+    let temp
+    document.getElementById("inputBox").addEventListener("input",(event)=>{
+        // console.log("Entered in the input box",event.target.value)
+        clearTimeout(temp)
+        temp = setTimeout(()=>{
+            console.log("Entered in the input box",event.target.value)
+            para.innerText=event.target.value
+            document.getElementById("inputBox").value=""
+        },1000)
+    })
+</script>

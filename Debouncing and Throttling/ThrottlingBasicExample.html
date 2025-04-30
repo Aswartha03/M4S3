@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Throttling Website</title>
+    <style>
+        body{
+            font-family:Arial, Helvetica, sans-serif;
+            text-align: center;
+        }
+        input{
+            width: 150px;
+            height: 3vh;
+            margin: 10px;
+        }
+        #btn{
+            width: 100px;
+            height: 4vh;
+            background-color: aqua;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        #btn:hover{
+            background-color: rgb(245, 8, 87);
+        }
+    </style>
+</head>
+<body>
+    <h3>Basic Throttling</h3>
+    <input type="text" id="name" placeholder="Enter Name" required>
+    <button id="btn">Click</button>
+</body>
+</html>
+<script>
+    
+    document.getElementById("btn").addEventListener("click",btnClick)
+        let canClick = true 
+        function btnClick(){
+            console.log("Outside the button")
+            if(canClick){
+                console.log("inside the button")
+                canClick = false // block the clicks
+                setTimeout(()=>{
+                    canClick = true // allow to click after every 2 sec 
+                },2000)
+            }
+        }
+
+
+</script>

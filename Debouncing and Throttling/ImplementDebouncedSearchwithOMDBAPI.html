@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implement Debounced Search with OMDB API</title>
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+        }
+        input{
+            width: 200px;
+            height: 4vh;
+            margin: 10px;
+        }
+        #container{
+            display: grid;
+            flex-wrap: wrap;
+            gap: 20px;
+            grid-template-columns: repeat(3,300px);
+            justify-content: center;
+        }
+        #container>div{
+            background-color: rgb(150, 150, 156);
+        }
+        #img{
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h3>Debounced Search </h3>
+    <input type="text" id="input" placeholder="Search">
+    <div id="container"></div>
+   
+
+</body>
+</html>
+<script>
+    let key  = "6095acf1"
+    let temp
+    // let api = "https://www.omdbapi.com/?apikey=YOUR_API_KEY&s=SEARCH_QUERY"
+    document.getElementById("input").addEventListener("input",(event)=>{
+            clearTimeout(temp)
+            temp = setTimeout(()=>{
+                async function fetchData(){
+                    let query = event.target.value
+                    console.log(query)
+                    // document.getElementById("input").value = ""
+                    let container = document.getElementById("container")
+                    container.innerHTML = ""
+                    let res = await fetch(`https://www.omdbapi.com/?apikey=${key}&s=${query}`)
+                    let data = await res.json()
+                    console.log(data.Search)
+                    if(!data.Search) return // error handling
+                    data.Search.forEach((movie)=>{
+                        let div = document.createElement("div")
+                        div.innerHTML = `
+                             <img src="${movie.Poster}" alt="${movie.Title}">
+                            <h4>${movie.Title} (${movie.Year})</h4>
+                            <p>${movie.Year}</p>
+                            <p>${movie.Type}</p>
+                            <p>${movie.imdbID}</p>
+                        `
+                        container.appendChild(div)
+                    })
+                }
+                fetchData()
+            },500)
+        
+    })
+        
+</script>
