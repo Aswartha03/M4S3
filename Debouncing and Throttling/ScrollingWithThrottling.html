@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrolling Web</title>
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            height: 40000px;
+        }
+        #btn{
+            width: 150px;
+            height: 5vh;
+            background-color: aqua;
+            border: none;
+            border-radius: 10px;
+            margin-top: 250px;
+        }
+        #btn:hover{
+            background-color: aquamarine;
+            border-radius: 15px;
+            width: 100px;
+            
+        }
+    </style>
+</head>
+<body>
+    <h3>Scrolling With Throttling</h3>
+    <button id="btn">Buy</button>
+</body>
+</html>
+<script> 
+    let prevScrolledTime = 0 
+     window.addEventListener("scroll",()=>{
+        let currentTime = Date.now() // present time
+        let time = currentTime-prevScrolledTime
+        if(time>=1000){ // after 1 sec our page should be loaded new data like how immages loaded after small gap
+            console.log("Scrolling Done")
+            prevScrolledTime = currentTime
+        } 
+     })
+
+</script>

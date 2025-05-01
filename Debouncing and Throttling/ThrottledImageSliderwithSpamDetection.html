@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Throttled Image Slider with Spam Detection</title>
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            height: 3000px;
+        }
+        button{
+            width: 200px;
+            height: 5vh;
+            background-color: rgb(235, 235, 91);
+            border: none;
+            border-radius: 10px;
+        }
+        button:nth-of-type(1):hover{
+            background-color: aqua;
+        
+        }
+        button:nth-of-type(2):hover{
+            background-color: rgb(11, 240, 106);
+        }
+        #images{
+            margin: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            grid-template-columns: repeat(1,1fr);
+            justify-content: center;
+            align-items: center;
+        }
+        #images>div{
+            width: 300px;
+            gap: 20px;
+        }
+        img{
+            width: 100%;
+        }
+        #slideNumber{
+            
+        }
+    </style>
+</head>
+<body>
+    <h4>Throttled Image Slider with Spam Detection</h4>
+    <button id="prev">Previous</button>
+    <button id="next">Next</button>
+    <br>
+    <span id="slideNumber">Slide:1</span>
+    <div id="images"></div>
+</body>
+</html>
+<script>
+   let slide = document.getElementById("slideNumber") 
+   slide.innerHTML = ""
+   let currentSlide = 1
+    let prevTime = 0
+    window.addEventListener("scroll",()=>{
+        let currentTime = Date.now()
+        if(currentTime-prevTime<100) {
+            alert ("Chill chill, loading it!!") 
+            return 
+        }
+        if(currentTime-prevTime>=1000){
+            // console.log("Inside if ")
+            prevTime = currentTime
+            
+             let container = document.getElementById("images") 
+            // container.innerHTML = ""
+            async function fetchImage(){
+                let response = await fetch("https://picsum.photos/600/400?random")
+                let div = document.createElement("div")
+                div.innerHTML=`
+                <img src="${response.url}" alt="">`
+                container.appendChild(div)
+                slide.innerHTML = `Slide: ${currentSlide}`
+                currentSlide+=1
+            }
+            fetchImage()
+        }
+    })
+</script>
