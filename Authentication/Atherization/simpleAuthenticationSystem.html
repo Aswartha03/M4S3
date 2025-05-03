@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Authentication System</title>
+    <style>
+        body{
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        input{
+            width: 200px;
+            height: 4vh;
+            margin: 2px;
+        }
+        button{
+            width: 200px;
+            height: 5vh;
+            margin: 5px;
+            background-color: aqua;
+            border: none;
+            border-radius: 5px
+        }
+        button:nth-of-type(1):hover{
+            background-color: rgb(22, 240, 22);
+            border-radius: 10px;
+        }
+        button:nth-of-type(1):hover{
+            background-color: rgb(51, 140, 241);
+            border-radius: 10px;
+        }
+        #container{
+            display: grid;
+            grid-template-columns: repeat(4,250px);
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            
+        }
+        #container div img{
+            width: 100%;
+        }
+        #container div{
+            gap: 10px 20px;
+            background-color: antiquewhite;
+        }
+        .hidden{
+            display: none;
+        }
+    </style>
+
+</head>
+<body>
+    <!-- Register Page  -->
+    <div id="register-container">
+        <h4>Register</h4>
+        <input type="text" id="register-name" placeholder="Enter the Name" required>
+        <input type="email" id="register-email" placeholder="Enter the Email" required>
+        <input type="password" id="register-password" placeholder="Enter the password" required>
+        <button id="register-btn">Register</button>
+    </div>
+
+    <!-- Login page   -->
+    <div id="login-container">
+        <h4>Login</h4>
+        <input type="email" id="login-email" placeholder="Enter the Email" required>
+        <input type="password" id="login-password" placeholder="Enter the password" required>
+        <button id="login-btn">Login</button>
+    </div>
+    <!-- logout  -->
+     <div id="logout-container">
+        <h3>Logout</h3>
+        <button id="logout-btn">Logout</button>
+     </div>
+    <!-- Dashboard -->
+    <div id="dassboard-container">
+        <h3>Welcome To Dashboard</h3>
+        <div id="container"></div>
+        
+    </div>
+
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+        import { getAuth,signInWithEmailAndPassword,onAuthStateChanged,createUserWithEmailAndPassword, signOut } 
+        from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyDTYjHGUMm83vFsX5dW5Tcs1MZvz8pAFY8",
+          authDomain: "simple-authentication-sy-f6fbe.firebaseapp.com",
+          projectId: "simple-authentication-sy-f6fbe",
+          storageBucket: "simple-authentication-sy-f6fbe.firebasestorage.app",
+          messagingSenderId: "699714196234",
+          appId: "1:699714196234:web:b383e8d9b39134f73ca0f3",
+          measurementId: "G-579SFD3K3R"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app)
+
+        // register method 
+        document.getElementById("register-btn").addEventListener("click",()=>{
+            let name = document.getElementById("register-name").value 
+            let email = document.getElementById("register-email").value
+            let password = document.getElementById("register-password").value 
+             // creating user
+            //  console.log("inside register block")
+            createUserWithEmailAndPassword(auth,email,password)
+            .then((res)=>{
+                alert("Registration Successfull ! Please log in...")
+            })
+            .catch((error)=>{
+                alert(error.message)
+            })
+            document.getElementById("register-name").value = ""
+            document.getElementById("register-email").value = ""
+            document.getElementById("register-password").value =""
+        })
+        // logout 
+        document.getElementById("logout-btn").addEventListener("click",()=>{
+            signOut(auth)
+            .then((res)=>{
+                alert("Logged Out Successfully....")
+                document.getElementById("signup-email").value  = ""
+                document.getElementById("signup-password").value  = ""
+            })
+            .catch((error)=>{
+                alert(error.message) 
+            })
+        })
+        // login page 
+        document.getElementById("login-btn").addEventListener("click",()=>{
+            let email = document.getElementById("login-email").value 
+            let password = document.getElementById("login-password").value 
+            // login 
+            signInWithEmailAndPassword(auth,email,password)
+            .then((res)=>{
+                displayData()
+                alert("Welcome to DashBoard")
+                document.getElementById("register-container").classList.add("hidden")
+                document.getElementById("login-container").classList.add("hidden")
+                document.getElementById("logout-container").classList.add("hidden")
+            })
+            .catch((error)=>{
+                alert("Wrong credentials! Try again.")
+            })
+            document.getElementById("login-email").value = ""
+            document.getElementById("login-password").value =""
+        })
+         // dashboard  
+         async function displayData() {
+            let res = await fetch("https://fakestoreapi.com/products")
+            let products= await res.json()
+            let container = document.getElementById("container") 
+            container.innerHTML=""
+            products.forEach((product)=>{
+                let div = document.createElement("div")
+                div.innerHTML = `
+                <img src="${product.image}" alt="${product.title}">
+                <h6>${product.title}</h6>
+                <p>${product.price}</p>
+                `
+                container.appendChild(div)
+            })
+         }
+         // state changes and display function 
+        //  onAuthStateChanged(auth,(user)=>{
+        //     if(user){
+        //         // displayData()
+        //         document.getElementById("register-container").classList.add("hidden")
+        //         document.getElementById("logout-container").classList.add("hidden")
+        //         document.getElementById("login-container").classList.add("hidden")
+        //     }
+        //     else{
+        //         document.getElementById("register-container").classList.remove("hidden")
+        //         document.getElementById("logout-container").classList.remove("hidden")
+        //         document.getElementById("login-container").classList.remove("hidden")
+        //     }
+        //  })
+      </script>
+</body>
+
+</html>
