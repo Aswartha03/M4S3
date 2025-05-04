@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Admin Panel</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+
+        }
+        body{
+            text-align: center;
+            background-color: light whitesmoke;
+            height: 100vh;
+            justify-content: center;
+            align-content: center;
+        }
+        .hidden{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- signup container -->
+    <div id="signup-container">
+        <h3>Sign Up</h3>
+        <input type="email" id="signup-email" placeholder="Enter the Email">
+        <input type="password" id="signup-password" placeholder="Enter the password">
+        <select  id="role">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+        </select>
+        <button id="signup-btn">Sign Up</button>
+        <p id="signup-msg"></p>
+    </div>
+    <!-- login container  -->
+    <div id="login-container">
+        <h3>Login</h3>
+        <input type="email" id="login-email" placeholder="Enter the Email">
+        <input type="password" id="login-password" placeholder="Enter the password">
+        <button id="login-btn">Login</button>
+    </div>
+    <!-- dashboard container -->
+     <div id="dashboard-container"  class="hidden">
+        <p>Welcome , <span id="user-email"></span> (<span id="user-role"></span>)</p>
+        <button id="logout-btn">Logout</button>
+
+        <div id="admin-container" class="hidden">
+            <h3>Admin Actions</h3>
+            <!--  adding data  -->
+            <div id="admin-operation">
+                <input type="text" id="title" placeholder="Enter the title">
+                <input type="text" id="image" placeholder="Enter Image Url" >
+                <input type="number" id="price" placeholder="Enter the Price">
+                <button id="adding-btn">Add Data</button>
+            </div>
+        </div>
+        <div id="user-container" class="hidden">
+            <h3>User Dashboard</h3>
+            <!-- <div></div> -->
+        </div>
+
+     </div>
+
+
+     <!-- script part  -->
+     <script type="module">
+        
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+        import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js"
+        import {getFirestore,doc,setDoc,getDoc } 
+        from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        const firebaseConfig = {
+          apiKey: "AIzaSyAYOSZhXf6lnyQcwEMfIAtpBgJ9VQsgRr8",
+          authDomain: "e-commerce-admin-panel-6cd3b.firebaseapp.com",
+          projectId: "e-commerce-admin-panel-6cd3b",
+          storageBucket: "e-commerce-admin-panel-6cd3b.firebasestorage.app",
+          messagingSenderId: "646552536790",
+          appId: "1:646552536790:web:fa0dd1166dfadf6a2deb77",
+          measurementId: "G-PN3R19SXVK"
+        };
+      
+        
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth  = getAuth(app)
+        const db = getFirestore(app)
+        //  signup function
+
+        document.getElementById("signup-btn").addEventListener("click",async()=>{
+            let email = document.getElementById("signup-email").value 
+            let password = document.getElementById("signup-password").value 
+            let role = document.getElementById("role").value 
+            // authenticate  
+            document.getElementById("signup-msg").innerText = ""
+            try {
+                let userData = await createUserWithEmailAndPassword(auth,email,password) 
+                let user = userData.user 
+                await setDoc(doc(db,"Users",user.uid),{
+                    email:user.email, 
+                    role : role  
+                })
+                document.getElementById("signup-msg").innerText="Signup Successfull"
+                document.getElementById("signup-email").value=""
+                document.getElementById("signup-password").value=""
+            } catch (error) {
+                document.getElementById("signup-msg").innerText=error.message
+            }
+        })
+         // login function 
+         document.getElementById("login-btn").addEventListener("click",async()=>{
+            let email = document.getElementById("login-email").value 
+            let password = document.getElementById("login-password").value
+            try {
+                let userdata = await signInWithEmailAndPassword(auth,email,password) 
+                document.getElementById("login-email").value = ""
+                document.getElementById("login-password").value = ""
+                // alert("login Success")
+            } catch (error) {
+                alert("invalid EmailId or Password!!!")
+            }
+        
+         })
+         document.getElementById("logout-btn").addEventListener("click",async()=>{
+            try {
+                await signOut(auth)
+                alert("logout done!!")
+            } catch (error) {
+                alert(error.message)
+            }
+         })
+         // state changes 
+         onAuthStateChanged(auth,async(user)=>{
+            if(user){
+                document.getElementById("user-email").innerText=user.email
+                let userDoc = await getDoc(doc(db,"Users",user.uid)) 
+                if(userDoc.exists()){
+                    let role = userDoc.data().role 
+                    document.getElementById("user-role").innerText=role
+
+                    // hiding and removing 
+                    document.getElementById("login-container").classList.add("hidden")
+                    document.getElementById("signup-container").classList.add("hidden")
+                    document.getElementById("dashboard-container").classList.remove("hidden")
+                    if(role=="admin"){
+                        document.getElementById("admin-container").classList.remove("hidden")
+                        document.getElementById("user-container").classList.add("hidden")
+                    }
+                    else if(role=="user"){
+                        document.getElementById("user-container").classList.remove("hidden")
+                        document.getElementById("admin-container").classList.add("hidden")
+                    }
+                }
+            }
+            else{
+                document.getElementById("login-container").classList.remove("hidden")
+                document.getElementById("signup-container").classList.remove("hidden")
+                document.getElementById("dashboard-container").classList.add("hidden")
+            }
+         })
+      </script>
+</body>
+</html>
