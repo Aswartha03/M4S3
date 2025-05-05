@@ -6,7 +6,7 @@ function removeComments(comments,spamWords){
         let a=[]
         for(let j=0;j<arr.length;j++){
             arr[j] = arr[j].toLowerCase()
-            a.push(arr[j])
+            a.push(arr[j]) 
         }
         // console.log(a)
         let flag = true 

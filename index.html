@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,13 +98,13 @@
 <script>
     // fetching data from url 
     let limit = 6 
-    let page = 1 
+    let page = 1
     let url = `https://rickandmortyapi.com/api/character/?page=${page}`
     async function fetchData(){
         let dataFromUrl = await fetch(`https://rickandmortyapi.com/api/character/?page==${page}/?limit=${limit}`)
         dataFromUrl = await dataFromUrl.json()
         totalData = dataFromUrl.results
-        searchAndFilter(totalData) 
+        searchAndFilter(totalData)
     }
     // let i=0
     async function displayData(data){
