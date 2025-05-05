@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DashBoard page</title>
+    <link rel="stylesheet" href="css/dashBoard.css">
+</head>
+<body>
+    <div class="container">
+        <h1>welcome, <span id="user-email"></span> (<span id="user-role"></span>)</h1>
+        <button id="logout-btn">Logout</button>
+        <div id="notes-container">
+            <h3>Sticky Notes</h3>
+            <textarea  id="note-input" placeholder="Right a note..."></textarea>
+            <button id="add-btn">Add Note</button>
+        </div>
+        <div id="notes-list">
+
+        </div>
+    </div>
+    
+
+
+
+    <script type="module" src="js/auth.js"></script>
+</body>
+</html>

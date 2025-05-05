@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation</title>
+    <style>
+        body{
+            text-align: center;
+            background-color: rgb(227, 233, 238);
+        }
+        .container{
+            display: inline;
+            justify-content: center;
+            align-content: center;
+            gap: 10px 20px;
+            text-align: center
+        }
+        input{
+            width: 50%;
+            height: 3vh;
+            /* max-width: 500px; */
+            align-content: center;
+            padding: 10px;
+        }
+        button{
+            width: 70px;
+            height: 7vh;
+            background-color: aqua;
+            border: none;
+            border-radius: 10px;
+            margin: 5px;
+            font-size: 15px;
+        }
+        button:hover{
+            background-color: rgb(22, 180, 180);
+            color: white;
+            border: 2px solid black;
+            margin: 5px;
+        }
+        select{
+            /* margin:20px; */
+            width: 50%;
+            height: 7vh;
+            max-width: 500px;
+            align-content: center;
+            padding: 10px;
+        }
+         #display-container{
+            margin: 20px;
+            display: grid;
+            gap: 10px 20px;
+            grid-template-columns: repeat(3,300px);
+            justify-content: center;
+         }
+         #display-container div{
+            background-color: rgb(190, 192, 192);
+         }
+         #display-container div img{
+            width: 90%;
+            height: 40vh;
+         }
+         #display-container div img p:nth-of-type(1){
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 16px;
+         }
+         /*  for differnet screens */
+         @media (max-width:480px) {
+            #display-container{
+                width: 70%;
+            }
+         }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- serach feature by name -->
+         <input type="text" id="searched-name" placeholder="Search Name">
+         
+         <!--  filter  -->
+         <select  id="user-specie">
+            <option value="human">Human</option>
+            <option value="alian">Alian</option>
+            <option value="robo">Robot</option>
+            <option value="Mythological-Creature">Mythological Creature</option>
+         </select>
+         <button id="input-name" onclick="fetchData()">Submit</button>
+         
+    </div>
+    <div id="display-container">
+
+    </div>
+    <button id="prev-btn">Prev</button>
+    <button id="next-btn">Next</button>
+</body>
+</html>
+<script>
+    // fetching data from url 
+    let limit = 6 
+    let page = 1
+    let url = `https://rickandmortyapi.com/api/character/?page=${page}`
+    async function fetchData(){
+        let dataFromUrl = await fetch(`https://rickandmortyapi.com/api/character/?page==${page}/?limit=${limit}`)
+        dataFromUrl = await dataFromUrl.json()
+        totalData = dataFromUrl.results
+        searchAndFilter(totalData)
+    }
+    // let i=0
+    async function displayData(data){
+        // let data = await fetchData()
+        console.log(data[0])
+        let container = document.getElementById("display-container")
+        container.innerHTML=""
+        // displaying 
+        
+        data.forEach((user)=>{
+            let eachUserDiv = document.createElement("div")
+            eachUserDiv.innerHTML =`
+                <p>${user.name}</p>
+                <img src="${user.image}" alt="${user.name}">
+                <p>${user.status}</p>
+            `
+            container.appendChild(eachUserDiv)
+
+        })
+    } 
+    
+    // search and filter function 
+    function searchAndFilter(data){
+        let searchedInput = document.getElementById("searched-name").value 
+        console.log(searchedInput)
+        document.getElementById("searched-name").value = ""
+        // let data = fetchData()
+        // console.log(data)
+        let searchedList =[]
+        if(searchedInput){
+            data.forEach((user)=>{
+                if(searchedInput==user.name){
+                    searchedList.push(user) 
+                }
+            })
+        }
+        let filterName = document.getElementById("user-specie").value 
+        let list = []
+        if(filterName){
+            if(searchedList){
+                data.forEach((user)=>{
+                    if(filterName==user.species)
+                        list.push(user)
+                })
+            }
+            else{
+                data.forEach((user)=>{
+                    if(filterName==user.species)
+                        list.push(user)
+                })
+            }
+        }
+        let res = searchedList.concat(list)
+        displayData(res)
+
+    }
+    // initially all the data should be visibled 
+    async function displayAll(){
+        let list  = await fetch(`https://rickandmortyapi.com/api/character/?page=${page}`)
+        list = await list.json()
+        list = list.results 
+        displayData(list)
+    }
+    displayAll()
+    
+
+</script>
